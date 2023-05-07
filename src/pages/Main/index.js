@@ -1,26 +1,38 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-import Animated from 'react-native-reanimated';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-
 import Header from '../../components/Header';
 import Tabs from '../../components/Tabs';
-
+import  db  from '../../../firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Container,
   Content,
-  Card, CardHeader, CardContent, CardFooter, Title, Description, Annotation, SafeAreaView,
+  Card, CardHeader, CardContent, Title, Description, SafeAreaView,
 } from './styles';
 
 export default function Main({ navigation }) {
   const [isVisible, setIsVisible] = useState(false);
+  const [user, setUser] = useState({nome:'', saldo:0})
+
+  const getUsers = async ()=>{
+    const authenticated = JSON.parse(await AsyncStorage.getItem('user'))
+    const appUser = await db.collection('Users').doc(authenticated.uid).get()
+    setUser(appUser.data())
+  }
+
+  function currencyFormat(num) {
+    return '$t ' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
+
+  useEffect(()=>{
+    getUsers();
+  },[])
 
   return (
     <SafeAreaView>
       <Container>
       <Icon name="menu" size={24} color="#FFF" onPress={()=>{navigation.openDrawer()}} style={{marginLeft: 20}}/>
-        <Header />
+        <Header nome={user.nome} />
         <Content>
             <Card 
             >
@@ -36,21 +48,13 @@ export default function Main({ navigation }) {
               <CardContent>
                 <Title>Saldo disponível</Title>
                 {isVisible ? 
-                <Description>$t 197,00</Description>
+                <Description>{currencyFormat(user.saldo)}</Description>
                 :
                 <Description>*****</Description>
                 }
-                
               </CardContent>
-              <CardFooter>
-                <Annotation>
-                Transferência de $t 20,00 recebida de Eder Rosa hoje às 16:00h
-                </Annotation>
-              </CardFooter>
             </Card>
-
         </Content>
-
         <Tabs />
       </Container>
     </SafeAreaView>

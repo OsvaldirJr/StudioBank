@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "StudioBank",
-    "slug": "StudioBank",
+    "slug": "studio-bank",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "61d7964e-26cb-4ba5-95c3-72aca13bde78"
+      }
+    },
+    "owner": "osvaldir.junior"
   }
 }
